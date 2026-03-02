@@ -1,3 +1,14 @@
+# Proiect pentru Programare Orientată pe Obiecte
+
+## Geometry Dash
+
+### În acest proiect, mi-am propus să recreez unul dintre jocurile mele preferate, Geometry Dash, în C++, utilizând diversele lucruri învățate la cursurile de POO, precum și independent.
+
+### Jocul are o premisă foarte simplă - jucătorul este un pătrat care trebuie să sară peste triunghiuri și să evite mai multe tipuri de obstacole. Foarte simplu, dar de asemenea, foarte distractiv. În plus, există și mai multe ”gamemode-uri” (ship, wave, ball etc.) care extind gameplay-ul în moduri unice. (p.s. - nu sunt sigur dacă voi putea implementa toate gamemode-urile existente în joc, dar voi încerca)
+
+
+--------------
+
 # Nu primesc notă pentru că nu am pus titlu și descriere
 
 ### Folosiți template-ul corespunzător grupei voastre!
