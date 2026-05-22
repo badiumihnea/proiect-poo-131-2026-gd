@@ -1,33 +1,22 @@
-# Proiect pentru Programare Orientată pe Obiecte
+# Geometry Dash - Remake
 
-## Geometry Dash
+În acest proiect, mi-am propus să recreez unul dintre jocurile mele preferate, Geometry Dash, în C++, utilizând diversele lucruri învățate la cursurile de POO, precum și independent.
 
-### În acest proiect, mi-am propus să recreez unul dintre jocurile mele preferate, Geometry Dash, în C++, utilizând diversele lucruri învățate la cursurile de POO, precum și independent.
+Jocul are o premiză foarte simplă - player-ul este un pătrat care trebuie să evite mai multe tipuri de obstacole (în principiu, triunghiuri). Foarte simplu, dar de asemenea, foarte distractiv. În plus, există și mai multe ”gamemode-uri” (ship, wave, ball etc.), toate diferite în felul lor. (p.s. - nu sunt sigur dacă voi putea implementa toate gamemode-urile existente în joc, dar voi încerca)
 
-### Jocul are o premisă foarte simplă - jucătorul este un pătrat care trebuie să sară peste triunghiuri și să evite mai multe tipuri de obstacole. Foarte simplu, dar de asemenea, foarte distractiv. În plus, există și mai multe ”gamemode-uri” (ship, wave, ball etc.) care extind gameplay-ul în moduri unice. (p.s. - nu sunt sigur dacă voi putea implementa toate gamemode-urile existente în joc, dar voi încerca)
+## To-do List
 
+Un mic checklist cu toate lucrurile pe care mi le-am propus să le adaug în proiect:
+
+- [ ] User Interface (Main Menu, Icon Menu etc.)
+- [ ] Responsiveness
+- [ ] Nivele (evident)
+- [ ] Gameplay Modifiers
+- [ ] Other fun stuff :))
 
 --------------
 
-# Nu primesc notă pentru că nu am pus titlu și descriere
-
-### Folosiți template-ul corespunzător grupei voastre!
-
-| Laborant  | Link template                                |
-|-----------|----------------------------------------------|
-| Dragoș B  | https://github.com/Ionnier/oop-template      |
-| Tiberiu M | https://github.com/MaximTiberiu/oop-template |
-| Marius MC | https://github.com/mcmarius/oop-template     |
-
-### Important!
-
-Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar dacă documentați riguros acest proces.
-Codul generat pus "ca să fie"/pe care nu îl înțelegeți se punctează doar pentru puncte bonus, doar în contextul
-în care oferă funcționalități ajutătoare și doar dacă are sens.
-
-Codul din proiect trebuie să poată fi ușor de înțeles și de modificat de către altcineva. Pentru detalii, veniți la ore.
-
-O cerință nu se consideră îndeplinită dacă este realizată doar prin cod generat.
+### Unrelated
 
 - **Fără cod de umplutură/fără sens!**
 - **Fără copy-paste!**
