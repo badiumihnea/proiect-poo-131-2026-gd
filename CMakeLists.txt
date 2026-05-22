@@ -22,40 +22,46 @@ include(cmake/CopyHelper.cmake)
 ###############################################################################
 
 # external dependencies with FetchContent
-# include(FetchContent)
-#
-# set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
-# set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strategy" FORCE)
-#
-# NOTE: Also update env vars used for caching in
+include(FetchContent)
+
+set(FETCHCONTENT_QUIET OFF CACHE INTERNAL "Override verbose output" FORCE)
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE INTERNAL "Override update strategy" FORCE)
+set(SFML_WARNINGS_AS_ERRORS OFF)
+
+# NOTE: Also update SFML_VERSION and other env vars used for caching in
 #     - .github/actions/configure-cmake/action.yml
 #     - .github/workflows/cmake.yml
-# FetchContent_Declare(
-#     SomeLib
-#     GIT_REPOSITORY https://github.com/<SomeUser>/<SomeLib>.git
-#     GIT_TAG        <some_git_hash> # <which tag/branch @ <some_date>>
-#     GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
-#     GIT_PROGRESS   ON
-# )
-#
-# FetchContent_MakeAvailable(SomeLib)
+FetchContent_Declare(
+        SFML
+        GIT_REPOSITORY https://github.com/SFML/SFML.git
+        # renovate: datasource=github-tags depName=SFML/SFML versioning=loose
+        GIT_TAG        3.1.0
+        # renovate: depName=SFML/SFML
+        # GIT_TAG        0fa201c969e48ecc253581c5841ce73f44d42f49 # 3.0.2
+        GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
+        GIT_PROGRESS   ON
+)
+
+FetchContent_MakeAvailable(SFML)
 
 ###############################################################################
 
 # external dependencies with find_package
 
-# find_package(Threads REQUIRED)
+find_package(Threads REQUIRED)
+if(APPLE)
+elseif(UNIX)
+    find_package(X11)
+endif()
 
 ###############################################################################
 
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
 add_executable(${MAIN_EXECUTABLE_NAME}
-    main.cpp
-        include/Student.cpp
-        include/Student.h
+        main.cpp
 )
 target_sources(${MAIN_EXECUTABLE_NAME}
-    PRIVATE
+        PRIVATE
         src/Example.cpp
 )
 
@@ -70,14 +76,19 @@ set_compiler_flags(RUN_SANITIZERS ${USE_ASAN} TARGET_NAMES ${MAIN_EXECUTABLE_NAM
 
 # use SYSTEM so cppcheck and clang-tidy do not report warnings from these directories
 target_include_directories(${MAIN_EXECUTABLE_NAME} PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
 )
 target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE
-    ext
+        ext
 )
-# target_include_directories(${MAIN_EXECUTABLE_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
-# target_link_directories(${MAIN_EXECUTABLE_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
-# target_link_libraries(${MAIN_EXECUTABLE_NAME} <SomeLib>)
+target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE
+        SFML::Graphics SFML::Window SFML::System Threads::Threads
+)
+
+if(APPLE)
+elseif(UNIX)
+    target_link_libraries(${MAIN_EXECUTABLE_NAME} PRIVATE X11)
+endif()
 
 ###############################################################################
 
