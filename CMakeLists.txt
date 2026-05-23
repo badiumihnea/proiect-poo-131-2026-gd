@@ -31,7 +31,6 @@ set(SFML_WARNINGS_AS_ERRORS OFF)
 # NOTE: Also update SFML_VERSION and other env vars used for caching in
 #     - .github/actions/configure-cmake/action.yml
 #     - .github/workflows/cmake.yml
-set(SFML_BUILD_NETWORK OFF CACHE BOOL "" FORCE)
 
 FetchContent_Declare(
         SFML
