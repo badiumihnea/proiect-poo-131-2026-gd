@@ -2,16 +2,18 @@
 // #include "Example.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-#include <SFML/System.hpp>
+// #include <SFML/System.hpp>
 #include <iostream>
 #include <string>
 #include <memory>
 #include <utility>
 #include <vector>
 #include <functional>
-#include <cmath>
-#include <cstdint>
+// #include <cmath>
+// #include <cstdint>
 #include <ostream>
+
+//Poate ca include-urile nefolosite dau erori (???)
 
 namespace Constants {
     constexpr unsigned int WINDOW_WIDTH = 1200;
@@ -33,9 +35,9 @@ namespace Constants {
     const sf::Color COLOR_ACC3 = sf::Color(100, 100, 180);
     const sf::Color COLOR_BTN_IDLE = sf::Color(40, 40, 80);
     const sf::Color COLOR_BTN_HOVER = sf::Color(60, 60, 120);
-    const sf::Color COLOR_BTN_ACTIVE = sf::Color(255, 180, 0);
+    // const sf::Color COLOR_BTN_ACTIVE = sf::Color(255, 180, 0);
     const sf::Color COLOR_TEXT = sf::Color(255, 255, 255);
-    const sf::Color COLOR_TEXT_DARK = sf::Color(20, 20, 40);
+    // const sf::Color COLOR_TEXT_DARK = sf::Color(20, 20, 40);
 }
 
 class ResourceManager {
@@ -353,10 +355,10 @@ class IconSelectState : public State {
     std::pair<float, float> iconPosition(int i) const {
         int n = static_cast<int>(m_icons.size());
         float spacing = 130.f;
-        float totalW = spacing * (n-1);
+        float totalW = spacing * static_cast<float>((n-1));
         float startX = Constants::WINDOW_WIDTH / 2.f - totalW /2.f;
         float cy = Constants::WINDOW_HEIGHT/2.f - 20.f;
-        return {startX + spacing * i, cy};
+        return {startX + spacing * static_cast<float>(i), cy};
     }
 public:
     explicit IconSelectState(Game* game) : m_title(game->getResources().getFont()) {
@@ -793,7 +795,7 @@ public:
     }
 
     [[nodiscard]] int objectCount() const {
-        return m_layout.size() + m_otherObjs.size();
+        return static_cast<int>(m_layout.size() + m_otherObjs.size());
     }
 };
 
