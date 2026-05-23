@@ -38,7 +38,7 @@ LINUX_DEPS=(
     libharfbuzz-dev
     libogg-dev
     libx11-dev
-    libssh2-dev
+    libssh2-1-dev
     xorg
 )
 
@@ -60,7 +60,7 @@ declare -A DEB_MAP=(
     [libharfbuzz-dev]=libharfbuzz-dev
     [libogg-dev]=libogg-dev
     [libx11-dev]=libx11-dev
-    [libssh2-dev]=libssh2-dev
+    [libssh2-1-dev]=libssh2-1-dev
     [xorg]=xorg
 )
 
@@ -81,7 +81,7 @@ declare -A RPM_MAP=(
     [libharfbuzz-dev]=libharfbuzz-devel
     [libogg-dev]=libogg-devel
     [libx11-dev]=libX11-devel
-    [libssh2-dev]=libssh2-devel
+    [libssh2-1-dev]=libssh2-devel
     [xorg]=xorg-x11-server-Xorg           # meta‑package that pulls the whole X server stack
 )
 
@@ -102,7 +102,7 @@ declare -A SUSE_MAP=(
     [libharfbuzz-dev]=libharfbuzz-devel
     [libogg-dev]=libogg-devel
     [libx11-dev]=libX11-devel
-    [libssh2-dev]=libssh2-devel
+    [libssh2-1-dev]=libssh2-devel
     [xorg]=xorg-x11-server
 )
 
@@ -123,7 +123,7 @@ declare -A ARCH_MAP=(
     [libharfbuzz-dev]=harfbuzz
     [libogg-dev]=libogg
     [libx11-dev]=libx11
-    [libssh2-dev]=libssh2
+    [libssh2-1-dev]=libssh2
     [xorg]=xorg-x11-server
 )
 
