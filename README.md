@@ -8,8 +8,9 @@ Jocul are o premiză foarte simplă - player-ul este un pătrat care trebuie să
 
 Un mic checklist cu toate lucrurile pe care mi le-am propus să le adaug în proiect:
 
-- [ ] User Interface (Main Menu, Icon Menu etc.)
-- [ ] Responsiveness
+- [x] User Interface (Main Menu, Icon Menu etc.)
+- [x] Debug State (more to be added)
+- [x] Responsiveness
 - [ ] Nivele (evident)
 - [ ] Gameplay Modifiers
 - [ ] Other fun stuff :))
@@ -28,8 +29,8 @@ Un mic checklist cu toate lucrurile pe care mi le-am propus să le adaug în pro
 
 ### Tema 0
 
-- [ ] Nume proiect (poate fi schimbat ulterior)
-- [ ] Scurtă descriere a temei alese, ce v-ați propus să implementați
+- [x] Nume proiect (poate fi schimbat ulterior)
+- [x] Scurtă descriere a temei alese, ce v-ați propus să implementați
 
 ## Tema 1
 

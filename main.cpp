@@ -9,11 +9,10 @@
 #include <utility>
 #include <vector>
 #include <functional>
-// #include <cmath>
-// #include <cstdint>
+#include <cmath>
+#include <cstdint>
 #include <ostream>
 
-//Poate ca include-urile nefolosite dau erori (???)
 
 namespace Constants {
     constexpr unsigned int WINDOW_WIDTH = 1200;
@@ -38,13 +37,14 @@ namespace Constants {
     // const sf::Color COLOR_BTN_ACTIVE = sf::Color(255, 180, 0);
     const sf::Color COLOR_TEXT = sf::Color(255, 255, 255);
     // const sf::Color COLOR_TEXT_DARK = sf::Color(20, 20, 40);
+    // Comentate pentru a rezolva erorile de pe MacOS
 }
 
 class ResourceManager {
     sf::Font m_mainFont;
 public:
     bool loadAll() {
-        std::string fontPath = "../GameAssets/PUSABFONT.otf";
+        std::string fontPath = "assets/PUSABFONT.otf";
         if (m_mainFont.openFromFile(fontPath)) {
             std::cout<<"[Resource Manager] Font loaded\n";
             return true;
@@ -55,7 +55,14 @@ public:
     const sf::Font& getFont() {
         return m_mainFont;
     }
+
+    friend std::ostream& operator<<(std::ostream& os, const ResourceManager& rm) {
+        os<<"[ResourceManager]\n";
+        os<<"Font: "<<rm.m_mainFont.getInfo().family<<"\n\n";
+        return os;
+    }
 };
+
 class Icon {
     int m_icon_id;
     sf::Color m_col1;
@@ -178,6 +185,18 @@ public:
             }
         }
     }
+    friend std::ostream& operator<<(std::ostream& os, const Icon icon) {
+        auto colorToStr = [](sf::Color c) -> std::string {
+            return std::to_string(c.r) + "," + std::to_string(c.g) + "," + std::to_string(c.b);
+        };
+        os<<"[Icon]\n";
+        os<<"Icon ID: "<< icon.m_icon_id <<"\n";
+        os<<"Main Color: "<<colorToStr(icon.m_col1)<<"\n";
+        os<<"Accent Color: "<<colorToStr(icon.m_col2)<<"\n";
+        os<<"Glow: "<<(icon.m_glow ? "ON" : "OFF")<<"\n";
+        os<<"Glow Color: "<<(icon.m_glow ? colorToStr(icon.m_glow_col) : "None")<<"\n";
+        return os;
+    }
 };
 
 class PlayerProfile {
@@ -186,6 +205,7 @@ class PlayerProfile {
 public:
     PlayerProfile(): m_username("GUEST") ,m_icon (0, sf::Color(80, 200, 120),
         sf::Color(0, 120, 255), false, sf::Color(255, 255, 255)) {}
+    explicit PlayerProfile(Icon icon) :m_username("GUEST"), m_icon(icon) {}
 
     [[nodiscard]] const Icon& getIcon() const {
         return m_icon;
@@ -201,12 +221,20 @@ public:
     void setUsername(const std::string& username) {
         this->m_username = username;
     }
+
+    friend std::ostream& operator<<(std::ostream& os, const PlayerProfile& profile) {
+        os<<"[PlayerProfile]\n";
+        os<<"Username: "<<profile.m_username<<"\n";
+        os<<profile.m_icon;
+        return os;
+    }
 };
 
 
 class Button {
     sf::RectangleShape m_shape;
     sf::Text m_text;
+    std::string m_label;
     bool m_hovered = false;
     void centerText(float x, float y, float w, float h) {
         sf::FloatRect tb = m_text.getLocalBounds();
@@ -215,7 +243,7 @@ class Button {
     }
 public:
     Button(float x, float y, float w, float h, const std::string& label, const sf::Font& font) :
-    m_text(font) {
+    m_text(font), m_label(label) {
         m_shape.setSize({w, h});
         m_shape.setPosition({x, y});
         m_shape.setFillColor(Constants::COLOR_BTN_IDLE);
@@ -249,6 +277,7 @@ public:
     }
 
     void setLabel(const std::string& label) {
+        m_label = label;
         m_text.setString(label);
         auto pos = m_shape.getPosition();
         auto size = m_shape.getSize();
@@ -257,6 +286,16 @@ public:
 
     bool isHovered() const {
         return m_hovered;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Button& btn) {
+        auto pos = btn.m_shape.getPosition();
+        auto size = btn.m_shape.getSize();
+        os<<"[Button]\n";
+        os<<"Label: "<<btn.m_label<<"\n";
+        os<<"Position: "<<pos.x<<", "<<pos.y<<"\n";
+        os<<"Size: "<<size.x<<", "<<size.y<<"\n\n";
+        return os;
     }
 };
 
@@ -267,10 +306,17 @@ public:
     virtual ~State() = default;
     virtual void onEnter() {}
     virtual void onExit() {}
+    [[nodiscard]] virtual std::string stateName() const = 0;
 
     virtual void handleEvents(sf::RenderWindow& window, const sf::Event& event) = 0;
     virtual void update() = 0;
     virtual void render(sf::RenderWindow& window) = 0;
+
+    friend std::ostream& operator<<(std::ostream& os, const State& s) {
+        os<<"[State]\n";
+        os<<"Name: "<<s.stateName()<<"\n\n";
+        return os;
+    }
 protected:
     Game* m_game = nullptr;
 };
@@ -300,6 +346,19 @@ public:
     }
     void toggleFullscreen();
     void run();
+
+    std::string getStateName() const {
+        return m_currentState ? m_currentState->stateName() : "None";
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Game& game) {
+        os<<"===============\nDEBUG INFO DUMP\n===============\n\n";
+        os<<"[Game]\n";
+        os<<"Window Mode: "<<(game.m_fullscreen ? "Fullscreen\n\n" : "Windowed\n\n");
+        os<<game.m_resources;
+        os<<game.m_profile;
+        return os;
+    }
 };
 
 class MainMenuState : public State {
@@ -345,6 +404,10 @@ public:
     void handleEvents(sf::RenderWindow& window, const sf::Event& event) override;
     void update() override;
     void render(sf::RenderWindow& window) override;
+
+    std::string stateName() const override {
+        return "Main Menu State";
+    }
 };
 
 class IconSelectState : public State {
@@ -418,6 +481,10 @@ public:
     }
 
     void render(sf::RenderWindow& window) override;
+
+    std::string stateName() const override {
+        return "Icon Select State";
+    }
 };
 
 class SettingsState : public State {
@@ -427,12 +494,14 @@ class SettingsState : public State {
     sf::Text m_volumeLabel;
     sf::RectangleShape m_sliderTrack;
     sf::CircleShape m_sliderThumb;
+    sf::Text m_debugTip;
 
     std::string fullscreenLabel() const {
         return m_game->isFullscreen() ? "Fullscreen : ON" : "Fullscreen : OFF";
     }
 public:
-    explicit SettingsState(Game* game) : m_title(game->getResources().getFont()), m_volumeLabel(game->getResources().getFont()) {
+    explicit SettingsState(Game* game) : m_title(game->getResources().getFont()), m_volumeLabel(game->getResources().getFont()),
+    m_debugTip(game->getResources().getFont()) {
         m_game = game;
         const sf::Font& font = game->getResources().getFont();
         m_title.setString("Settings");
@@ -447,7 +516,7 @@ public:
         m_fullscreenButton = std::make_unique<Button>(cx, 240.f, Constants::BUTTON_WIDTH,
             Constants::BUTTON_HEIGHT, fullscreenLabel(), font);
 
-        m_volumeLabel.setString("Volume\n\n\n\n(Warning: This doesn't work yet lmao)");
+        m_volumeLabel.setString("Volume (Under construction)");
         m_volumeLabel.setCharacterSize(20u);
         m_volumeLabel.setFillColor(sf::Color(200, 200, 200));
         {
@@ -458,7 +527,7 @@ public:
 
         m_sliderTrack.setSize({360.f, 8.f});
         m_sliderTrack.setFillColor(sf::Color(80, 80, 120));
-        m_sliderTrack.setPosition({Constants::WINDOW_WIDTH/2.f-150.f, 390.f});
+        m_sliderTrack.setPosition({Constants::WINDOW_WIDTH/2.f-180.f, 390.f});
         m_sliderThumb.setRadius(12.f);
         m_sliderThumb.setFillColor(Constants::COLOR_ACC);
         m_sliderThumb.setOrigin({12.f, 12.f});
@@ -466,6 +535,15 @@ public:
 
         m_backButton = std::make_unique<Button>(cx, 500.f, Constants::BUTTON_WIDTH,
             Constants::BUTTON_HEIGHT, "Back", font);
+
+        m_debugTip.setString("Tip: Press F3 for debug info in console :)");
+        m_debugTip.setCharacterSize(20u);
+        m_debugTip.setFillColor(sf::Color(200, 200, 200));
+        {
+            sf::FloatRect db = m_debugTip.getLocalBounds();
+            m_debugTip.setOrigin({db.size.x/2.f, db.size.y/2.f});
+        }
+        m_debugTip.setPosition({Constants::WINDOW_WIDTH/2.f, 420.f});
     }
 
     void handleEvents(sf::RenderWindow& /*window*/, const sf::Event& event) override {
@@ -491,6 +569,10 @@ public:
     }
 
     void render(sf::RenderWindow& window) override;
+
+    std::string stateName() const override {
+        return "Settings State";
+    }
 };
 
 class PlayState : public State {
@@ -640,6 +722,10 @@ public:
         window.draw(m_ground);
         drawPlayerWithRotation(window);
     }
+
+    std::string stateName() const override {
+        return "Play State";
+    }
 };
 
 class Obstacle {
@@ -690,34 +776,55 @@ public:
         window.draw(spike);
     }
 
+    Obstacle(const Obstacle& other) : m_obsId(other.m_obsId), m_x(other.m_x), m_y(other.m_y), m_layer(other.m_layer){
+        std::cout<<"[Obstacle]: "<<m_obsId<<" copied using copy constructor\n";
+    }
+
+    Obstacle& operator=(const Obstacle& other) {
+        if (this == &other) {
+            return *this;
+        }
+        m_obsId = other.m_obsId;
+        m_x = other.m_x;
+        m_y = other.m_y;
+        m_layer = other.m_layer;
+        std::cout<<"[Obstacle]: "<<m_obsId<<" assigned using operator=\n";
+        return *this;
+    }
+
+    ~Obstacle() {
+        std::cout<<"[Obsstacle]:"<<m_obsId<<" Destroyed\n";
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const Obstacle& obs) {
-        std::cout<<"This object is an obstacle. Its ingame ID is "<<obs.m_obsId<<
-        ". It will be placed at X: "<<obs.m_x<<" and Y: "<<obs.m_y<<
-        " on Layer #"<<obs.m_layer<<".\n";
+        os<<"[Obstacle]\n";
+        os<<"ID: "<<obs.m_obsId<<"\n";
+        os<<"Coordinates: ("<<obs.m_x<<", "<<obs.m_y<<")\n";
+        os<<"Layer: #"<<obs.m_layer<<"\n\n";
         return os;
     }
 };
 
 class OtherObj {
-    std::string m_obj_id;
+    std::string m_objId;
     float m_x;
     float m_y;
     int m_layer;
 
 public:
     OtherObj(std::string obj_id, float x, float y, int layer)
-        : m_obj_id(std::move(obj_id)),
+        : m_objId(std::move(obj_id)),
           m_x(x),
           m_y(y),
           m_layer(layer) {
     }
 
     [[nodiscard]] std::string getObjId() const {
-        return m_obj_id;
+        return m_objId;
     }
 
-    void setObjid(const std::string &id) {
-        this->m_obj_id = id;
+    void setObjId(const std::string &id) {
+        this->m_objId = id;
     }
 
     [[nodiscard]] float getX() const {
@@ -745,45 +852,33 @@ public:
     }
 
     friend std::ostream& operator<<(std::ostream& os, const OtherObj& obj) {
-        std::cout<<"The object's ingame ID is "<<obj.m_obj_id<<
-        ". The object will be placed at X: "<<obj.m_x<<" and Y: "<<
-        obj.m_y<<" on Layer #"<<obj.m_layer<<".\n";
+        os<<"[Other Object]\n";
+        os<<"ID: "<<obj.m_objId<<"\n";
+        os<<"Coordinates: ("<<obj.m_x<<", "<<obj.m_y<<")\n";
+        os<<"Layer: #"<<obj.m_layer<<"\n";
         return os;
     }
 };
 
 class Level {
-    std::string m_lvl_id;
+    std::string m_lvlId;
     std::vector<Obstacle> m_layout={};
     std::vector<OtherObj> m_otherObjs={};
 public:
     Level(std::string lvl_id, const std::vector<Obstacle> &layout, const std::vector<OtherObj> &other_objs)
-        : m_lvl_id(std::move(lvl_id)),
+        : m_lvlId(std::move(lvl_id)),
           m_layout(layout),
           m_otherObjs(other_objs) {
     }
 
-    Level(const Level& other) :
-    m_lvl_id(other.m_lvl_id), m_layout(other.m_layout), m_otherObjs(other.m_otherObjs) {
-        std::cout<<"Level has been copied!\n";
-    }
 
-    Level& operator=(const Level& other) {
-        m_lvl_id = other.m_lvl_id;
-        m_layout = other.m_layout;
-        m_otherObjs = other.m_otherObjs;
-        std::cout<<"Level has been copied! (using operator=)\n";
-        return *this;
-    }
-
-    ~Level() {
-        std::cout<<"Level has been deleted. Bye bye!\n";
-    }
 
     friend std::ostream& operator<<(std::ostream& os, const Level& lvl) {
-        std::cout<<"Level ID is "<<lvl.m_lvl_id<<". The number of objects is "<<size(lvl.m_layout) + size(lvl.m_otherObjs)<<"\n";
-        if (size(lvl.m_layout) + size(lvl.m_otherObjs) >= 1000) {
-            std::cout<<"Level has a large amount of objects.";
+        os<<"[Level]\n";
+        os<<"ID: "<<lvl.m_lvlId<<"\n";
+        os<<"Object Count: "<<lvl.objectCount()<<"\n";
+        if (lvl.objectCount() >= 1000) {
+            os<<"WARNING! Large amount of items. This might cause slower performance on some devices.\n";
         }
         return os;
     }
@@ -845,6 +940,27 @@ void Game::run() {
             }
             if (m_currentState) {
                 m_currentState->handleEvents(m_window, *event);
+            }
+            if (const auto* e = event->getIf<sf::Event::KeyPressed>()) {
+                if (e->code == sf::Keyboard::Key::F3) {
+                    std::cout<<*this<<"\n";
+                    if (m_currentState) {
+                        std::cout<<*m_currentState;
+                    }
+                    std::cout<<"Obstacles - Showcase of copy constructor, assign operator, destructor\n";
+                    Obstacle obs1("spike", 400.f, 550.f, 0);
+                    std::cout<<obs1;
+                    Obstacle obs2 = obs1;
+                    obs2.setX(500.f);
+                    std::cout<<obs2;
+                    Obstacle obs3("temp", 0.f, 0.f, 0);
+                    obs3=obs1;
+                    std::cout<<obs3;
+                    OtherObj deco("y_orb", 300.f, 200.f, 1);
+                    std::cout<<deco<<"\n";
+                    Level testLevel("debug_lvl", { Obstacle("spike", 100.f, 580.f, 0), Obstacle("spike", 200.f, 580.f, 0)}, {OtherObj("y_orb", 150.f, 400.f, 0)});
+                    std::cout<<testLevel<<"\n";
+                }
             }
         }
 
@@ -936,6 +1052,7 @@ void SettingsState::render(sf::RenderWindow& window) {
     window.draw(m_volumeLabel);
     window.draw(m_sliderTrack);
     window.draw(m_sliderThumb);
+    window.draw(m_debugTip);
     m_backButton->draw(window);
 }
 
