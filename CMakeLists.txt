@@ -60,10 +60,36 @@ endif()
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
 add_executable(${MAIN_EXECUTABLE_NAME}
         main.cpp
+        include/ResourceManager.h
+        src/ResourceManager.cpp
+        include/Icon.h
+        src/Icon.cpp
+        include/PlayerProfile.h
+        src/PlayerProfile.cpp
+        include/Button.h
+        include/Constants.h
+        src/Button.cpp
+        include/Game.h
+        src/Game.cpp
+        include/State.h
+        src/State.cpp
+        include/MainMenuState.h
+        src/MainMenuState.cpp
+        include/IconSelectState.h
+        src/IconSelectState.cpp
+        include/SettingsState.h
+        src/SettingsState.cpp
+        include/PlayState.h
+        src/PlayState.cpp
+        include/Obstacle.h
+        src/Obstacle.cpp
+        include/OtherObj.h
+        src/OtherObj.cpp
+        include/Level.h
+        src/Level.cpp
 )
 target_sources(${MAIN_EXECUTABLE_NAME}
         PRIVATE
-        src/Example.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
