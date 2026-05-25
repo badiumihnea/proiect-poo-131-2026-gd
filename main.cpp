@@ -1,5 +1,4 @@
 // This also works if you do not want `include/`, but some editors might not like it
-#pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
